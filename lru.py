@@ -6,18 +6,13 @@ class LRU:
         self.list = []
 
     def add(self, value):
-        if value not in self.list:
+        f = value in self.list
+        if not f:
             self.falts += 1
-
-        if len(self.list) >= self.slots:
-            if value not in self.list:
-                self.pop()
-            else:
-                self.pop(self.list.index(value))
-        self.list.append(value)
-
-    def pop(self, pos=None):
-        if pos:
-            self.list.pop(pos)
         else:
+            self.list.pop(self.list.index(value))
+
+        if len(self.list) == self.slots and not f:
             self.list.pop(0)
+ 
+        self.list.append(value)
