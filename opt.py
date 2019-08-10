@@ -4,50 +4,46 @@ class Opt:
     def __init__(self, slots, pages):
         self.slots = slots
         self.falts = 0
+        self.list = []
+
         self.pages = pages
-        self.falts_list = max(pages)*[0]
+        self.falts_list = [[] for cont in range((max(pages)+1))]
         self.load()
 
     def load(self):
-        for page in self.pages:
-            self.falts_list[page] += 1
+        for cont in range(len(self.pages)):
+            self.falts_list[self.pages[cont]].append(cont)
+        
+        
+    def add(self, value, index):
+        founded = False
+        last_page = None
+        index_page = 0
 
-    def add(self):
-        pass
+        for l in self.list:
+            if l == value:
+                founded = True
+             
+            page_index_list = self.falts_list[l]
+
+            while len(page_index_list) > 0 and index >= page_index_list[0]:
+                page_index_list.pop(0)
+
+            if len(page_index_list) == 0:
+                last_page = (index_page, 0)
+            elif last_page != None:
+                if last_page[1] != 0 and page_index_list[0] > last_page[1]:
+                    last_page = (index_page, page_index_list[0])
+            elif last_page == None:
+                last_page = (index_page, page_index_list[0])
+            
+            index_page+=1
 
 
-class Page:
+        if not founded:
+            self.falts += 1
+            if len(self.list) == self.slots:
+                self.list.pop(last_page[0])
 
-    def __init__(self, page_id, rec):
-        self.page_id = page_id
-        self.rec = rec
-
-    def __gt__(self, other):
-        return self.rec < other.rec
-
-class OrderedList:
-
-    def __init__(self, page_list):
-        self.list = sorted(page_list)
-
-    def add(self, page):
-        page_idx = self.search(page.rec)
-        self.list.insert(page_idx)
-
-    def search(self, rec):
-        begin = 0
-        end = len(self.list)-1
-
-        while (begin <= end):
-            mid = (begin+end)//2
-
-            if self.list[mid] == rec:
-                return (mid, True)
-            elif self.list[mid] < rec:
-                if(self.list[mid+1] > rec):
-                    return (mid, False)
-                begin = mid+1
-            else:
-                end = mid-1
-        return (mid, False)
+            self.list.append(value)
         

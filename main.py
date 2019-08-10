@@ -14,14 +14,14 @@ if __name__ == "__main__":
     slots = args[1]
     file_name = args[2]
 
-    entries = read_file(file_name)
+    entries = list(read_file(file_name))
     fifo = Fifo(int(slots))
     lru = LRU(int(slots))
     opt = Opt(int(slots), entries)
 
-    for entrie in entries:
-        fifo.add(int(entrie))
-        lru.add(int(entrie))
+    for index, entrie in enumerate(entries):
+        fifo.add(entrie)
+        lru.add(entrie)
+        opt.add(entrie, index)
 
-    print(fifo.falts)
-    print(lru.falts)
+    print("{} quadros,      {} refs: FIFO:    {} PFs, LRU:    {} PFs, OPT:    {} PFs".format(slots, len(entries), fifo.falts, lru.falts, opt.falts))
